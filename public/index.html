@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Puzzle Hunt - Team Registration</title>
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .terminal-window {
+      max-width: 800px;
+      width: 100%;
+      background: var(--secondary-bg);
+      border: 2px solid var(--accent-success);
+      border-radius: 8px;
+      padding: 40px;
+      box-shadow: 0 0 15px rgba(0, 255, 159, 0.1);
+    }
+
+    .main-title {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 15px;
+      color: var(--accent-success);
+    }
+
+    .intro-text {
+      text-align: center;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .form-group {
+      margin: 30px 0;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--accent-success);
+      font-size: 1.1rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 15px;
+      background: var(--primary-bg);
+      border: 2px solid var(--accent-success);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 1.2rem;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--border-glow);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+    }
+
+    .btn-start {
+      width: 100%;
+      padding: 18px;
+      background: var(--accent-success);
+      border: none;
+      color: var(--primary-bg);
+      font-family: var(--font-mono);
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-start:hover {
+      background: var(--border-glow);
+      transform: translateY(-1px);
+    }
+
+    .btn-start:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .error-message {
+      color: var(--accent-danger);
+      margin-top: 15px;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .info-text {
+      text-align: center;
+      margin-top: 30px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .leaderboard-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .leaderboard-link a {
+      color: var(--border-glow);
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: color 0.3s;
+    }
+
+    .leaderboard-link a:hover {
+      color: var(--accent-success);
+      text-decoration: underline;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-bottom: 30px;
+    }
+
+    .warning-box {
+      background: rgba(255, 193, 7, 0.1);
+      border: 2px solid var(--accent-warning);
+      border-radius: 4px;
+      padding: 15px 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .warning-box strong {
+      color: var(--accent-warning);
+      font-size: 1.1rem;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .warning-box p {
+      color: var(--text-primary);
+      margin: 0;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal-window">
+    <h1 class="main-title">2026 CSHS Puzzle Hunt Challenge</h1>
+
+    <div class="intro-text">
+      <p>Work with your team to solve a series of short puzzles!</p>
+    </div>
+
+    <div class="warning-box">
+      <strong>⚠️ Your time will start immediately after you click Start!</strong>
+    </div>
+
+    <form id="team-registration">
+      <div class="form-group">
+        <label for="team-name">Team Name:</label>
+        <input
+          type="text"
+          id="team-name"
+          name="team-name"
+          placeholder="Enter your team name..."
+          maxlength="50"
+          required
+          autofocus
+        >
+      </div>
+
+      <button type="submit" class="btn-start" id="submit-btn">
+        Start
+      </button>
+
+      <div id="error-message" class="error-message"></div>
+    </form>
+
+    <div class="info-text">
+      <p>Enter any team name to begin, view leaderboard below:</p>
+    </div>
+
+    <div class="leaderboard-link">
+      <a href="/leaderboard.html" target="_blank">→ View Leaderboard</a>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const form = document.getElementById('team-registration');
+    const teamNameInput = document.getElementById('team-name');
+    const submitBtn = document.getElementById('submit-btn');
+    const errorMessage = document.getElementById('error-message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const teamName = teamNameInput.value.trim();
+
+      if (!teamName) {
+        showError('Team name cannot be empty');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Connecting...';
+      errorMessage.textContent = '';
+
+      try {
+        const response = await fetch('/api/team/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ teamName })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          // Store team name in localStorage
+          localStorage.setItem('teamName', teamName);
+
+          // Redirect to game page
+          window.location.href = '/game.html';
+        } else {
+          showError(result.message);
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Start Game';
+        }
+      } catch (error) {
+        showError('Connection failed. Please try again.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Start Game';
+      }
+    });
+
+    function showError(message) {
+      errorMessage.textContent = `ERROR: ${message}`;
+    }
+
+    // Check if team is already registered
+    const existingTeam = localStorage.getItem('teamName');
+    if (existingTeam) {
+      teamNameInput.value = existingTeam;
+    }
+  </script>
+</body>
+</html>

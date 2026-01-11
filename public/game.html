@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYSTEM BREACH - Mission in Progress</title>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/game.css">
+</head>
+<body>
+  <div class="game-container">
+    <!-- Header -->
+    <header class="game-header">
+      <h1 class="game-title">2026 CSHS Puzzle Hunt Challenge</h1>
+      <div class="team-info">
+        Team: <span class="team-name" id="team-name">Loading...</span>
+      </div>
+      <div class="team-info">
+        Time: <span id="timer">00:00</span>
+      </div>
+    </header>
+
+    <!-- Progress Section -->
+    <section class="progress-section">
+      <h2>Password Progress</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 15px;">
+        Each challenge reveals one letter. Collect all letters of the master password.
+      </p>
+      <div class="password-display" id="password-display">
+        <!-- Will be populated by JavaScript -->
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+      </div>
+      <p style="text-align: center; margin-top: 10px; color: var(--text-secondary);">
+        <span id="progress-text">0 / 6 challenges solved</span>
+      </p>
+    </section>
+
+    <!-- Challenges Grid -->
+    <section class="challenges-section">
+      <h2 style="text-align: center; margin-bottom: 20px; color: var(--accent-success);">
+        Challenges
+      </h2>
+      <div class="challenges-grid" id="challenges-grid">
+        <!-- Will be populated by JavaScript -->
+      </div>
+    </section>
+
+    <!-- Final Password Section -->
+    <section class="final-password-section" id="final-password-section">
+      <h2>🔐 Final Password</h2>
+      <p style="color: var(--accent-warning); font-size: 1.1rem; margin-bottom: 20px;">
+        All challenges complete! Enter the master password to finish.
+      </p>
+      <div class="final-password-input-group">
+        <input
+          type="text"
+          id="final-password-input"
+          class="final-password-input"
+          placeholder="Enter master password..."
+          maxlength="20"
+        >
+        <button id="submit-password-btn" class="submit-password-btn">
+          Submit
+        </button>
+      </div>
+      <div id="password-feedback" class="challenge-feedback"></div>
+      <div class="password-attempts">
+        Attempts: <span id="password-attempts-count">0</span>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-links">
+      <a href="/leaderboard.html" target="_blank">View Leaderboard</a>
+      <a href="/index.html">← Return to Start</a>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/socket-client.js"></script>
+  <script src="/js/terminal.js"></script>
+  <script src="/js/game.js"></script>
+</body>
+</html>

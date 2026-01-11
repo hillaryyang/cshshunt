@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYSTEM BREACH - Access Granted!</title>
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Animated background effect */
+    .victory-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 50%, rgba(0, 255, 159, 0.1), transparent 70%);
+      animation: pulse-bg 3s ease-in-out infinite;
+      z-index: -1;
+    }
+
+    @keyframes pulse-bg {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.05); }
+    }
+
+    .victory-container {
+      max-width: 900px;
+      width: 100%;
+      text-align: center;
+      animation: fadeIn 1s ease-in;
+    }
+
+    .victory-icon {
+      font-size: 6rem;
+      margin-bottom: 30px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .victory-title {
+      font-size: 3.5rem;
+      color: var(--accent-success);
+      text-shadow: 0 0 20px var(--accent-success);
+      margin-bottom: 20px;
+      animation: glow 2s ease-in-out infinite;
+    }
+
+    @keyframes glow {
+      0%, 100% { text-shadow: 0 0 10px var(--accent-success); }
+      50% { text-shadow: 0 0 30px var(--accent-success), 0 0 40px var(--accent-success); }
+    }
+
+    .victory-message {
+      font-size: 1.5rem;
+      color: var(--text-primary);
+      margin-bottom: 40px;
+      line-height: 1.8;
+    }
+
+    .team-name-display {
+      font-size: 2rem;
+      color: var(--border-glow);
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .completion-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin: 40px 0;
+      flex-wrap: wrap;
+    }
+
+    .stat-box {
+      background: var(--secondary-bg);
+      border: 2px solid var(--accent-success);
+      border-radius: 8px;
+      padding: 25px 40px;
+      min-width: 200px;
+      box-shadow: 0 0 20px rgba(0, 255, 159, 0.3);
+      transition: all 0.3s;
+    }
+
+    .stat-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 30px rgba(0, 255, 159, 0.5);
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    .stat-value {
+      color: var(--accent-success);
+      font-size: 2.5rem;
+      font-weight: bold;
+      text-shadow: 0 0 10px var(--accent-success);
+    }
+
+    .password-reveal {
+      background: var(--secondary-bg);
+      border: 2px solid var(--accent-warning);
+      border-radius: 8px;
+      padding: 30px;
+      margin: 30px 0;
+      box-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
+    }
+
+    .password-reveal h3 {
+      color: var(--accent-warning);
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+    }
+
+    .revealed-password {
+      font-size: 3rem;
+      color: var(--accent-success);
+      font-weight: bold;
+      letter-spacing: 8px;
+      text-shadow: 0 0 15px var(--accent-success);
+      animation: glow 2s ease-in-out infinite;
+    }
+
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+
+    .btn-victory {
+      padding: 18px 40px;
+      font-size: 1.2rem;
+      font-family: var(--font-mono);
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: var(--accent-success);
+      border: 2px solid var(--accent-success);
+      color: var(--primary-bg);
+    }
+
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--accent-success);
+      box-shadow: 0 0 20px rgba(0, 255, 159, 0.5);
+      transform: translateY(-3px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 2px solid var(--border-glow);
+      color: var(--border-glow);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border-glow);
+      color: var(--primary-bg);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+      transform: translateY(-3px);
+    }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: var(--accent-success);
+      position: absolute;
+      animation: confetti-fall 3s linear infinite;
+    }
+
+    @keyframes confetti-fall {
+      0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
+    .message-box {
+      background: rgba(0, 255, 159, 0.1);
+      border: 1px solid var(--accent-success);
+      border-radius: 6px;
+      padding: 20px;
+      margin: 30px 0;
+      color: var(--text-primary);
+      line-height: 1.8;
+    }
+
+    @media (max-width: 768px) {
+      .victory-title {
+        font-size: 2rem;
+      }
+
+      .victory-icon {
+        font-size: 4rem;
+      }
+
+      .completion-stats {
+        gap: 20px;
+      }
+
+      .stat-box {
+        padding: 20px 30px;
+        min-width: 150px;
+      }
+
+      .revealed-password {
+        font-size: 2rem;
+        letter-spacing: 4px;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn-victory {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="victory-bg"></div>
+
+  <div class="victory-container">
+    <div class="victory-icon">🎉</div>
+
+    <h1 class="victory-title">Congratulations!</h1>
+
+    <div class="team-name-display">
+      Team: <span id="team-name">Loading...</span>
+    </div>
+
+    <p class="victory-message">
+      You successfully solved all challenges and discovered the master password!<br>
+      Well done!
+    </p>
+
+    <div class="completion-stats">
+      <div class="stat-box">
+        <div class="stat-label">Completion Time</div>
+        <div class="stat-value" id="completion-time">--:--</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Challenges Solved</div>
+        <div class="stat-value">8 / 8</div>
+      </div>
+    </div>
+
+    <div class="password-reveal">
+      <h3>🔓 Master Password</h3>
+      <div class="revealed-password">FIREWALL</div>
+    </div>
+
+    <div class="message-box">
+      <p>
+        <strong>Great work!</strong> You successfully completed all challenges and found the password.
+      </p>
+      <p style="margin-top: 15px; color: var(--accent-success);">
+        Your team's performance has been recorded on the leaderboard.
+      </p>
+    </div>
+
+    <div class="action-buttons">
+      <a href="/leaderboard.html" class="btn-victory btn-primary">
+        View Leaderboard
+      </a>
+      <a href="/index.html" class="btn-victory btn-secondary">
+        New Attempt
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Get team info from localStorage
+    const teamName = localStorage.getItem('teamName') || 'Unknown Team';
+    const victoryTime = localStorage.getItem('victoryTime') || '--:--';
+
+    document.getElementById('team-name').textContent = teamName;
+    document.getElementById('completion-time').textContent = victoryTime;
+
+    // Add some celebratory confetti effect
+    function createConfetti() {
+      const colors = ['#00ff9f', '#00ffff', '#ffaa00', '#ff0055'];
+      for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+          const confetti = document.createElement('div');
+          confetti.style.position = 'fixed';
+          confetti.style.left = Math.random() * 100 + '%';
+          confetti.style.top = '-10px';
+          confetti.style.width = '10px';
+          confetti.style.height = '10px';
+          confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.borderRadius = '50%';
+          confetti.style.animation = `confetti-fall ${3 + Math.random() * 2}s linear`;
+          confetti.style.opacity = '0.8';
+          confetti.style.zIndex = '1000';
+
+          document.body.appendChild(confetti);
+
+          setTimeout(() => confetti.remove(), 5000);
+        }, i * 100);
+      }
+    }
+
+    // Trigger confetti on load
+    createConfetti();
+
+    // Repeat confetti every 5 seconds
+    setInterval(createConfetti, 5000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Puzzle Hunt</title>
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    .admin-container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 30px;
+      background: var(--bg-secondary);
+      border: 2px solid var(--accent-primary);
+      border-radius: 8px;
+    }
+    .admin-btn {
+      width: 100%;
+      padding: 15px;
+      margin: 10px 0;
+      background: var(--accent-warning);
+      color: var(--text-primary);
+      border: none;
+      border-radius: 4px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      font-weight: bold;
+      font-family: 'Courier New', monospace;
+    }
+    .admin-btn:hover {
+      background: var(--accent-error);
+      transform: scale(1.02);
+      transition: all 0.2s;
+    }
+    .admin-btn.view-btn {
+      background: var(--accent-primary);
+    }
+    .admin-btn.view-btn:hover {
+      background: var(--accent-success);
+    }
+    .admin-input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      border: 1px solid var(--accent-primary);
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    .admin-input:focus {
+      outline: none;
+      border-color: var(--accent-success);
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+    }
+    .status-message {
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 4px;
+      text-align: center;
+      font-weight: bold;
+      display: none;
+      font-family: 'Courier New', monospace;
+    }
+    .status-success {
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid var(--accent-success);
+      color: var(--accent-success);
+    }
+    .status-error {
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid var(--accent-error);
+      color: var(--accent-error);
+    }
+    .teams-display {
+      margin-top: 20px;
+      color: var(--text-primary);
+      font-family: 'Courier New', monospace;
+    }
+    .team-item {
+      background: var(--bg-primary);
+      padding: 15px;
+      margin: 10px 0;
+      border-left: 3px solid var(--accent-primary);
+      border-radius: 4px;
+    }
+    .team-item.finished {
+      border-left-color: var(--accent-success);
+    }
+    .team-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--accent-primary);
+    }
+    .team-stats {
+      margin-top: 8px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    label {
+      color: var(--text-primary);
+      display: block;
+      margin-bottom: 5px;
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+    }
+    .warning-text {
+      color: var(--accent-warning);
+      text-align: center;
+      margin: 20px 0;
+      font-size: 0.9rem;
+      font-family: 'Courier New', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <h1 style="text-align: center; color: var(--accent-warning);">🔐 Admin Panel</h1>
+    <p style="text-align: center; color: var(--text-secondary); font-family: 'Courier New', monospace;">
+      Manage game state and leaderboard
+    </p>
+    
+    <div style="margin-top: 30px;">
+      <label for="admin-key">Admin Key:</label>
+      <input 
+        type="password" 
+        id="admin-key" 
+        class="admin-input" 
+        placeholder="Enter admin key..."
+        autocomplete="off"
+      >
+      
+      <button id="reset-btn" class="admin-btn">
+        🔴 RESET LEADERBOARD
+      </button>
+      
+      <p class="warning-text">
+        ⚠️ This will delete ALL team data and reset the game!
+      </p>
+      
+      <button id="view-teams-btn" class="admin-btn view-btn">
+        👥 VIEW ALL TEAMS
+      </button>
+      
+      <div id="status-message" class="status-message"></div>
+      
+      <div id="teams-display" class="teams-display"></div>
+    </div>
+    
+    <div style="margin-top: 30px; text-align: center;">
+      <a href="/leaderboard.html" style="color: var(--accent-primary); font-family: 'Courier New', monospace;">← Back to Leaderboard</a>
+      <span style="color: var(--text-secondary); margin: 0 10px;">|</span>
+      <a href="/index.html" style="color: var(--accent-primary); font-family: 'Courier New', monospace;">← Back to Home</a>
+    </div>
+  </div>
+
+  <script>
+    const statusDiv = document.getElementById('status-message');
+    const adminKeyInput = document.getElementById('admin-key');
+    const teamsDisplay = document.getElementById('teams-display');
+    
+    // Reset leaderboard
+    document.getElementById('reset-btn').addEventListener('click', async () => {
+      const adminKey = adminKeyInput.value.trim();
+      
+      if (!adminKey) {
+        showStatus('❌ Please enter admin key', 'error');
+        return;
+      }
+      
+      if (!confirm('⚠️ Are you sure you want to RESET the entire leaderboard?\n\nThis will delete all team data!\n\nThis action cannot be undone!')) {
+        return;
+      }
+      
+      // Double confirmation for safety
+      if (!confirm('⚠️⚠️ FINAL CONFIRMATION ⚠️⚠️\n\nAre you ABSOLUTELY sure?\n\nAll progress will be permanently lost!')) {
+        return;
+      }
+      
+      try {
+        const response = await fetch('/admin/reset', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ adminKey })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          showStatus('✅ Leaderboard reset successfully!', 'success');
+          teamsDisplay.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">All teams cleared. Ready for fresh start!</p>';
+        } else {
+          showStatus('❌ ' + data.message, 'error');
+        }
+      } catch (error) {
+        showStatus('❌ Error: ' + error.message, 'error');
+      }
+    });
+    
+    // View all teams
+    document.getElementById('view-teams-btn').addEventListener('click', async () => {
+      const adminKey = adminKeyInput.value.trim();
+      
+      if (!adminKey) {
+        showStatus('❌ Please enter admin key', 'error');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/admin/teams?adminKey=' + encodeURIComponent(adminKey));
+        const data = await response.json();
+        
+        if (data.success) {
+          showStatus(`✅ Found ${data.totalTeams} team(s)`, 'success');
+          
+          if (data.totalTeams === 0) {
+            teamsDisplay.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">No teams registered yet.</p>';
+          } else {
+            let html = '<h3 style="color: var(--accent-primary); margin-bottom: 15px;">📊 Registered Teams:</h3>';
+            
+            data.teams.forEach(team => {
+              const solved = team.challenges.filter(c => c.solved).length;
+              const finishedClass = team.finished ? 'finished' : '';
+              const statusEmoji = team.finished ? '✅' : '⏳';
+              const elapsedTime = team.finished 
+                ? formatTime(team.victoryTime - team.startTime)
+                : formatTime(Date.now() - team.startTime);
+              
+              html += `
+                <div class="team-item ${finishedClass}">
+                  <div class="team-name">${statusEmoji} ${team.teamName}</div>
+                  <div class="team-stats">
+                    Challenges: ${solved}/6 | 
+                    Points: ${team.totalPoints} | 
+                    Time: ${elapsedTime} | 
+                    Status: ${team.finished ? 'FINISHED' : 'In Progress'}
+                  </div>
+                </div>
+              `;
+            });
+            
+            teamsDisplay.innerHTML = html;
+          }
+        } else {
+          showStatus('❌ ' + data.message, 'error');
+        }
+      } catch (error) {
+        showStatus('❌ Error: ' + error.message, 'error');
+      }
+    });
+    
+    function showStatus(message, type) {
+      statusDiv.className = 'status-message status-' + type;
+      statusDiv.textContent = message;
+      statusDiv.style.display = 'block';
+      
+      setTimeout(() => {
+        if (type !== 'success') {
+          statusDiv.style.display = 'none';
+        }
+      }, 5000);
+    }
+    
+    function formatTime(ms) {
+      const seconds = Math.floor(ms / 1000);
+      const minutes = Math.floor(seconds / 60);
+      const hours = Math.floor(minutes / 60);
+      
+      if (hours > 0) {
+        return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
+      } else if (minutes > 0) {
+        return `${minutes}m ${seconds % 60}s`;
+      } else {
+        return `${seconds}s`;
+      }
+    }
+    
+    // Allow Enter key to submit
+    adminKeyInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('view-teams-btn').click();
+      }
+    });
+  </script>
+</body>
+</html>
