@@ -150,7 +150,7 @@ Put it all together! Think places.`,
     title: 'Leadership Longevity',
     subtitle: 'Your last challenge...',
     description: `The answer to this challenge is the **sum of your seven CSHS officers' ages**`,
-    answer: 'Y',
+    answer: '117',
     character: 'Y',
   }
 ];
@@ -330,6 +330,15 @@ function validateAnswer(challengeId, answer, partIndex) {
   // Standard text answer validation
   const normalizedAnswer = answer.trim().toUpperCase();
   const normalizedCorrect = challenge.answer.toUpperCase();
+
+  // Debug logging for challenge 6
+  if (challengeId === 6) {
+    console.log(`[DEBUG] Challenge 6 validation:`);
+    console.log(`  Raw answer: "${answer}" (type: ${typeof answer})`);
+    console.log(`  Normalized answer: "${normalizedAnswer}"`);
+    console.log(`  Expected answer: "${normalizedCorrect}"`);
+    console.log(`  Match: ${normalizedAnswer === normalizedCorrect}`);
+  }
 
   if (normalizedAnswer === normalizedCorrect) {
     return {
