@@ -261,7 +261,7 @@
   margin: 20px 0;
   color: var(--text-primary);
   line-height: 1.8;
-  white-space: pre-wrap;
+  white-space: pre-line;
   font-size: 0.95rem;
 }
 
@@ -375,6 +375,7 @@
   color: var(--text-secondary);
   background: rgba(0, 0, 0, 0.15);
 }
+
 
 .hidden-flag {
   color: var(--primary-bg);
@@ -816,7 +817,8 @@
   color: #000;
   font-family: var(--font-mono);
   text-transform: uppercase;
-  caret-color: #000;
+  caret-color: transparent;
+  cursor: default;
   padding: 0;
   margin: 0;
   display: block;
@@ -826,9 +828,8 @@
 }
 
 .crossword-grid input.crossword-input:focus {
-  background: white;
-  outline: 2px solid #000;
-  outline-offset: -2px;
+  background: #a8d5ff;
+  outline: none;
   box-shadow: none;
 }
 

@@ -134,9 +134,6 @@ io.on('connection', (socket) => {
   socket.on('submitAnswer', (data) => {
     const { teamName, challengeId, answer, incorrectAttempts = 0, partIndex } = data;
 
-    // Debug logging
-    console.log(`[DEBUG] Challenge ${challengeId} submission: answer="${answer}" (type: ${typeof answer}, length: ${answer?.length})`);
-
     // Check rate limiting
     if (!gameState.canSubmit(teamName)) {
       socket.emit('challengeResult', {

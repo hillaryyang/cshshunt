@@ -11,7 +11,6 @@ class Game {
     this.expandedChallenges = new Set(); // Will be set based on game state
     this.forceExpandedChallengeId = null;
     this.scrollAnchor = null;
-
     this.init();
   }
 
@@ -80,11 +79,6 @@ class Game {
     socketClient.onPasswordResult((data) => {
       console.log('Password result:', data);
       this.handlePasswordResult(data);
-    });
-
-    // Leaderboard updates
-    socketClient.onLeaderboardUpdate((data) => {
-      console.log('Leaderboard updated');
     });
 
     // Connection status
@@ -351,7 +345,7 @@ class Game {
             <div class="ctf-part-label">Part ${currentPartNumber} of ${partsTotal}</div>
             <div class="ctf-part-title">${Terminal.sanitizeHTML(currentPart ? currentPart.title : 'Part')}</div>
           </div>
-          <div class="challenge-description ctf-part-description">
+          <div class="challenge-description">
             ${Terminal.parseMarkdown(currentPart ? currentPart.description : 'No part details available.')}
           </div>
           ${currentPart && currentPart.type === 'image' ? `
@@ -551,6 +545,7 @@ class Game {
             }
           });
         }
+
       } else {
         // Add event listeners for answer submission
         const submitBtn = card.querySelector('.submit-answer-btn');
@@ -719,6 +714,13 @@ class Game {
 
     // Set up event handlers
     this.setupCrosswordHandlers(challenge.id);
+
+    // Auto-focus first across clue (1 Across)
+    if (clues.across.length > 0) {
+      const firstClue = clues.across[0];
+      state.currentDirection = 'across';
+      this.focusCrosswordCell(challenge.id, firstClue.row, firstClue.col);
+    }
   }
 
   /**
@@ -753,13 +755,27 @@ class Game {
         }
       });
 
-      // Handle backspace
+      // Handle backspace and navigation keys
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Backspace' && e.target.value === '') {
           e.preventDefault();
           const row = parseInt(e.target.dataset.row);
           const col = parseInt(e.target.dataset.col);
           this.moveToPreviousCell(challengeId, row, col, state.currentDirection);
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          // Move to next word
+          const row = parseInt(e.target.dataset.row);
+          const col = parseInt(e.target.dataset.col);
+          const challenge = this.challenges.find(c => c.id === challengeId);
+          const clue = this.getClueForCell(challenge, row, col, state.currentDirection);
+          if (clue) {
+            const next = this.getNextClue(challenge, clue, state.currentDirection);
+            if (next) {
+              state.currentDirection = next.direction;
+              this.focusCrosswordCell(challengeId, next.clue.row, next.clue.col);
+            }
+          }
         } else if (e.key === 'Tab') {
           e.preventDefault();
           // Switch direction
@@ -771,13 +787,34 @@ class Game {
         }
       });
 
-      // Handle click - highlight word
+      // Handle click - toggle direction on double click
       input.addEventListener('click', () => {
         const row = parseInt(input.dataset.row);
         const col = parseInt(input.dataset.col);
+
+        // Check if clicking the same cell
+        const isSameCell = state.currentCell &&
+                          state.currentCell[0] === row &&
+                          state.currentCell[1] === col;
+
+        const challenge = this.challenges.find(c => c.id === challengeId);
+        const acrossClue = this.getClueForCell(challenge, row, col, 'across');
+        const downClue = this.getClueForCell(challenge, row, col, 'down');
+
+        if (isSameCell && acrossClue && downClue) {
+          // Toggle direction if clicking same cell and both directions exist
+          state.currentDirection = state.currentDirection === 'across' ? 'down' : 'across';
+        } else {
+          // First click: prefer across direction
+          if (acrossClue) {
+            state.currentDirection = 'across';
+          } else {
+            state.currentDirection = 'down';
+          }
+        }
+
         state.currentCell = [row, col];
         this.updateActiveClue(challengeId, row, col);
-        input.select();
       });
     });
 
@@ -1007,7 +1044,6 @@ class Game {
     if (!input) return false;
 
     input.focus();
-    input.select();
 
     const state = this.crosswordState[challengeId];
     if (state) {
@@ -1298,7 +1334,6 @@ class Game {
       this.submitAnswer(challengeId, answer, incorrectAttempts);
     }, 1000);
   }
-
 
   /**
    * Submit an answer for a challenge

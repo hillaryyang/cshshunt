@@ -4,18 +4,18 @@ const CHALLENGES = [
   {
     id: 1,
     title: 'Tech Trailblazers',
-    subtitle: 'Match pioneers to their achievements',
-    description: `Match all eight to continue! Each incorrect pair reduces points by 1.`,
+    subtitle: 'Match the computer science pioneer to their achievement',
+    description: `Click the name on the left, then the corresponding description!`,
     answer: '',
     character: 'B',
     type: 'connection',
     connections: [
-      { person: 'Alan Turing', achievement: 'Father of computer science' },
-      { person: 'Grace Hopper', achievement: 'Created first compiler, COBOL language' },
-      { person: 'Tim Berners-Lee', achievement: 'Invented the World Wide Web' },
+      { person: 'Alan Turing', achievement: 'Contributed to the Allied victory in WWII' },
+      { person: 'Grace Hopper', achievement: 'Created COBOL, one of the first high-level programming languages' },
+      { person: 'Donald Knuth', achievement: 'Introduced TeX typesetting program' },
       { person: 'Ada Lovelace', achievement: 'First computer programmer' },
-      { person: 'Linus Torvalds', achievement: 'Built Linux operating system and Git (version control)' },
-      { person: 'Dennis Ritchie', achievement: 'Created C programming language' },
+      { person: 'Linus Torvalds', achievement: 'Built Linux operating system and Git version control' },
+      { person: 'Katherine Johnson', achievement: 'Calculated orbital mechanics for the first U.S. crewed spaceflights' },
       { person: 'Vint Cerf', achievement: 'Co-invented TCP/IP protocols' },
       { person: 'Larry Page', achievement: 'Co-founder of Google' }
     ]
@@ -36,7 +36,7 @@ Expected output for \`n=5\` (5th Fibonacci number):
 2
 3
 \`\`\`
-**Submission:** After passing the sample, click "Submit Answer" to test your code!.`,
+**Submission:** After passing the sample, click "Submit Answer" to test your code!`,
     answer: 'CODE_CHALLENGE',
     character: 'I',
     type: 'code',
@@ -74,7 +74,7 @@ Expected output for \`n=5\` (5th Fibonacci number):
     id: 4,
     title: 'Flag Fun',
     subtitle: 'Multi-part CTF challenge',
-    description: `Complete all four parts in order. Each part hides a flag.`,
+    description: `Complete all four CTF mini challenges, then put your answers together!`,
     answer: 'CTF_MULTI',
     character: 'A',
     type: 'ctf',
@@ -82,8 +82,7 @@ Expected output for \`n=5\` (5th Fibonacci number):
       {
         id: 1,
         title: 'Part 1: Blend In',
-        description: `
-Subject: Following up on today's meeting
+        description: `Subject: Following up on today's meeting
 
 Hi team,
 
@@ -99,18 +98,16 @@ Arjun`,
       },
       {
         id: 2,
-        title: 'Part 2: Hidden in Plain Sight',
-        description: `
-Check out the website!`,
+        title: 'Part 2: Inspect',
+        description: `This website is pretty cool, right? You should dig deeper!`,
         answer: 'CTF_TWOZEROFOUREIGHT',
         isFlag: true,
         available: true
       },
       {
         id: 3,
-        title: 'Part 3: A Cryptic Note',
-        description: `
-What could this mean?`,
+        title: 'Part 3: ABCDE or QWERTY?',
+        description: `What could this mean?`,
         answer: 'CTF_FIFTYFIVE',
         type: 'image',
         imagePath: '/images/ctf-part3.png',
@@ -120,8 +117,7 @@ What could this mean?`,
       {
         id: 4,
         title: 'Part 4: Eight Squared',
-        description: `
-VFdPU0VWRU5aRVJPRUlHSFQ=`,
+        description: `This string will help: \`VFdPU0VWRU5aRVJPRUlHSFQ=\``,
         answer: 'CTF_TWOSEVENZEROEIGHT',
         isFlag: true,
         available: true
@@ -129,8 +125,7 @@ VFdPU0VWRU5aRVJPRUlHSFQ=`,
       {
         id: 5,
         title: 'Final Answer',
-        description: `
-Put it all together! Think places.`,
+        description: `Put it all together! Think places.`,
         answer: 'DUBAI',
         isFlag: false,
         available: true
@@ -330,15 +325,6 @@ function validateAnswer(challengeId, answer, partIndex) {
   // Standard text answer validation
   const normalizedAnswer = answer.trim().toUpperCase();
   const normalizedCorrect = challenge.answer.toUpperCase();
-
-  // Debug logging for challenge 6
-  if (challengeId === 6) {
-    console.log(`[DEBUG] Challenge 6 validation:`);
-    console.log(`  Raw answer: "${answer}" (type: ${typeof answer})`);
-    console.log(`  Normalized answer: "${normalizedAnswer}"`);
-    console.log(`  Expected answer: "${normalizedCorrect}"`);
-    console.log(`  Match: ${normalizedAnswer === normalizedCorrect}`);
-  }
 
   if (normalizedAnswer === normalizedCorrect) {
     return {

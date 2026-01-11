@@ -189,13 +189,6 @@ class SocketClient {
   }
 
   /**
-   * Request leaderboard data
-   */
-  requestLeaderboard() {
-    return this.send('requestLeaderboard');
-  }
-
-  /**
    * Listen for registration result
    */
   onRegistrationResult(handler) {
@@ -221,13 +214,6 @@ class SocketClient {
    */
   onGameState(handler) {
     return this.on('gameState', handler);
-  }
-
-  /**
-   * Listen for leaderboard updates
-   */
-  onLeaderboardUpdate(handler) {
-    return this.on('leaderboardUpdate', handler);
   }
 
   /**

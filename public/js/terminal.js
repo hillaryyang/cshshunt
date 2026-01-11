@@ -251,6 +251,27 @@ const Terminal = {
    * Handles: `code`, **bold**, ```code blocks```, and preserves line breaks
    */
   parseMarkdown(str) {
+    // Trim leading/trailing whitespace
+    str = str.trim();
+
+    // Dedent: Remove common leading whitespace from all lines
+    const lines = str.split('\n');
+    const nonEmptyLines = lines.filter(line => line.trim().length > 0);
+    if (nonEmptyLines.length > 1) {
+      // Skip first line when calculating indent (it might be on same line as template literal backtick)
+      const indents = nonEmptyLines.slice(1).map(line => {
+        const match = line.match(/^(\s*)/);
+        return match ? match[1].length : 0;
+      });
+      const minIndent = Math.min(...indents);
+      if (minIndent > 0) {
+        // Keep first line as-is, dedent the rest
+        const firstLine = lines[0];
+        const remainingLines = lines.slice(1).map(line => line.slice(minIndent));
+        str = [firstLine, ...remainingLines].join('\n');
+      }
+    }
+
     // First escape HTML to prevent injection
     const div = document.createElement('div');
     div.textContent = str;
