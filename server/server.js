@@ -298,21 +298,14 @@ io.on('connection', (socket) => {
     if (isCorrect) {
       gameState.markVictory(teamName);
 
-      const elapsedMs = team.victoryTime - team.startTime;
-      const minutes = Math.floor(elapsedMs / 60000);
-      const seconds = Math.floor((elapsedMs % 60000) / 1000);
-      const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
       socket.emit('passwordResult', {
         correct: true,
-        victoryTime: timeStr,
         message: 'SYSTEM BREACH SUCCESSFUL!'
       });
 
       // Broadcast victory
       io.emit('teamVictory', {
-        teamName: team.teamName,
-        time: timeStr
+        teamName: team.teamName
       });
     } else {
       socket.emit('passwordResult', {

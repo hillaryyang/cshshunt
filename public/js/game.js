@@ -8,7 +8,6 @@ class Game {
     this.teamName = null;
     this.teamData = null;
     this.challenges = [];
-    this.timer = null;
     this.expandedChallenges = new Set(); // Will be set based on game state
     this.forceExpandedChallengeId = null;
     this.scrollAnchor = null;
@@ -43,9 +42,6 @@ class Game {
 
     // Set up UI event listeners
     this.setupUIListeners();
-
-    // Start timer
-    this.startTimer();
   }
 
   /**
@@ -117,15 +113,6 @@ class Game {
         this.submitFinalPassword();
       }
     });
-  }
-
-  /**
-   * Start the game timer
-   */
-  startTimer() {
-    const timerElement = document.getElementById('timer');
-    const startTime = Date.now();
-    this.timer = Terminal.startTimer(timerElement, startTime);
   }
 
   /**
@@ -1607,7 +1594,7 @@ class Game {
    * Handle password result from server
    */
   handlePasswordResult(data) {
-    const { correct, message, victoryTime } = data;
+    const { correct, message } = data;
     const input = document.getElementById('final-password-input');
     const button = document.getElementById('submit-password-btn');
     const feedback = document.getElementById('password-feedback');
@@ -1617,9 +1604,6 @@ class Game {
       feedback.textContent = `✓ Correct! Password accepted!`;
       feedback.className = 'challenge-feedback visible success';
       Terminal.showSuccess('Congratulations! You solved the puzzle!');
-
-      // Store victory time
-      localStorage.setItem('victoryTime', victoryTime);
 
       // Redirect to victory page
       setTimeout(() => {

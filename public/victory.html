@@ -266,12 +266,8 @@
 
     <div class="completion-stats">
       <div class="stat-box">
-        <div class="stat-label">Completion Time</div>
-        <div class="stat-value" id="completion-time">--:--</div>
-      </div>
-      <div class="stat-box">
         <div class="stat-label">Challenges Solved</div>
-        <div class="stat-value">8 / 8</div>
+        <div class="stat-value">6 / 6</div>
       </div>
     </div>
 
@@ -296,10 +292,7 @@
   <script>
     // Get team info from localStorage
     const teamName = localStorage.getItem('teamName') || 'Unknown Team';
-    const victoryTime = localStorage.getItem('victoryTime') || '--:--';
-
     document.getElementById('team-name').textContent = teamName;
-    document.getElementById('completion-time').textContent = victoryTime;
 
     // Add some celebratory confetti effect
     function createConfetti() {

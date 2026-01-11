@@ -19,13 +19,11 @@ class GameState {
 
     const teamData = {
       teamName: sanitizedName,
-      startTime: Date.now(),
       challenges: Array.from({ length: 6 }, (_, i) => ({
         id: i + 1,
         solved: false,
         answer: null,
         character: null,
-        solvedAt: null,
         points: 0,
         incorrectAttempts: 0,
         partsSolved: 0,
@@ -33,7 +31,6 @@ class GameState {
       })),
       totalPoints: 0,
       passwordAttempts: 0,
-      victoryTime: null,
       finished: false
     };
 
@@ -117,7 +114,6 @@ class GameState {
     const team = this.teams.get(teamName);
     if (!team) return false;
 
-    team.victoryTime = Date.now();
     team.finished = true;
     return true;
   }
