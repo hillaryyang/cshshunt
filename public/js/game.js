@@ -801,11 +801,20 @@ class Game {
         const acrossClue = this.getClueForCell(challenge, row, col, 'across');
         const downClue = this.getClueForCell(challenge, row, col, 'down');
 
-        if (isSameCell && acrossClue && downClue) {
-          // Toggle direction if clicking same cell and both directions exist
-          state.currentDirection = state.currentDirection === 'across' ? 'down' : 'across';
+        // Get the currently active clue (before this click)
+        let activeClue = null;
+        if (state.currentCell) {
+          activeClue = this.getClueForCell(challenge, state.currentCell[0], state.currentCell[1], state.currentDirection);
+        }
+
+        // Check if the new clicked cell is within the currently active word
+        const isInCurrentWord = activeClue && this.isCellInWord(row, col, activeClue, state.currentDirection);
+
+        if (isInCurrentWord) {
+          // Stay on current word if clicking within it
+          // Don't change direction
         } else {
-          // First click: prefer across direction
+          // Clicking on a new cell: default to across
           if (acrossClue) {
             state.currentDirection = 'across';
           } else {
@@ -1086,6 +1095,16 @@ class Game {
       }
       return clue.col === col && row >= clue.row && row < clue.row + clue.length;
     });
+  }
+
+  /**
+   * Check if a cell is part of a word
+   */
+  isCellInWord(row, col, clue, direction) {
+    if (direction === 'across') {
+      return clue.row === row && col >= clue.col && col < clue.col + clue.length;
+    }
+    return clue.col === col && row >= clue.row && row < clue.row + clue.length;
   }
 
   /**
