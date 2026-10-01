@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: cshs-hunt
+    runtime: docker
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ADMIN_KEY
+        generateValue: true
