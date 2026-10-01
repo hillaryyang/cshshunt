@@ -16,7 +16,7 @@ const CHALLENGES = [
       { person: 'Ada Lovelace', achievement: 'First computer programmer' },
       { person: 'Linus Torvalds', achievement: 'Built Linux operating system and Git version control' },
       { person: 'Katherine Johnson', achievement: 'Calculated orbital mechanics for the first U.S. crewed spaceflights' },
-      { person: 'Vint Cerf', achievement: 'Co-invented TCP/IP protocols' },
+      { person: 'Vint Cerf', achievement: 'Co-invented TCP/IP protocols and internet architecture' },
       { person: 'Larry Page', achievement: 'Co-founder of Google' }
     ]
   },
